@@ -1,154 +1,29 @@
-'use client'
+import React, { useState } from 'react'; import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth"; import { FaGoogle, FaPhone } from "react-icons/fa";
 
-import { signIn } from 'next-auth/react';
-import { AiFillGithub } from 'react-icons/ai';
-import { FcGoogle } from 'react-icons/fc';
-import { useCallback, useState } from 'react';
-import {
-    FieldValues,
-    SubmitHandler,
-    useForm
-} from 'react-hook-form';
+const Login = () => { const auth = getAuth();
 
-import Modal from './Modal';
-import useRegisterModal from '@/app/hooks/useRegisterModal';
-import useLoginModal from '@/app/hooks/useLoginModal';
-import Heading from '../Heading';
-import Input from '../Inputs/Input';
-import toast from 'react-hot-toast';
-import Button from '../Button';
-import { useRouter } from 'next/navigation';
+const handleGoogleSignIn = async () => { const provider = new GoogleAuthProvider(); await signInWithPopup(auth, provider); };
 
-const LoginModal = () => {
-    const router = useRouter();
+const sendOtp = async () => { window.recaptchaVerifier = new RecaptchaVerifier('recaptcha-container', {}, auth); const phoneNumber = "+639123456789"; // Replace with user input const confirmation = await signInWithPhoneNumber(auth, phoneNumber, window.recaptchaVerifier); window.confirmationResult = confirmation; };
 
-    const registerModal = useRegisterModal();
-    const loginModal = useLoginModal();
+return ( <div className="flex flex-col items-center min-h-screen bg-gala-blue text-white p-6"> <img src="/public/images/logo.png" alt="GALA Logo" className="h-16 mb-4" /> <h1 className="text-2xl font-bold">Welcome to GALA</h1> <p className="text-sm text-gray-200 mb-6">Book and host properties easily</p>
 
-    const [isLoading, setIsLoading] = useState(false);
+<button 
+    onClick={handleGoogleSignIn} 
+    className="flex items-center space-x-2 bg-white text-gala-blue px-4 py-2 rounded shadow-md hover:bg-gray-100">
+    <FaGoogle /> <span>Sign in with Google</span>
+  </button>
+  
+  <button 
+    onClick={sendOtp} 
+    className="flex items-center space-x-2 mt-4 bg-airbnb-coral text-white px-4 py-2 rounded shadow-md hover:bg-red-500">
+    <FaPhone /> <span>Sign in with Phone</span>
+  </button>
+  
+  <div id="recaptcha-container" className="mt-4"></div>
+</div>
 
-    const {
-        register,
-        handleSubmit,
-        formState: {
-            errors,
-        }
-    } = useForm<FieldValues>({
-        defaultValues: {
-            email: '',
-            password: ''
-        }
-    })
+); };
 
-    const onSubmit: SubmitHandler<FieldValues> = (data) => {
-        setIsLoading(true);
+export default Login;
 
-        signIn('credentials', {
-            ...data,
-            redirect: false,
-        })
-            .then((callback) => {
-                setIsLoading(false);
-
-                if (callback?.ok) {
-                    toast.success("Logged In");
-                    router.refresh();
-                    loginModal.onClose();
-                }
-
-                if (callback?.error) {
-                    toast.error(callback.error);
-                }
-            })
-    }
-
-    const toggle = useCallback(() => {
-        loginModal.onClose();
-        registerModal.onOpen();
-    }, [loginModal, registerModal])
-
-    const bodyContent = (
-        <div className="flex flex-col gap-4">
-            <Heading
-                title="Welcome back"
-                subtitle="Login to your Account"
-            />
-            <Input
-                id="email"
-                label="Email"
-                disabled={isLoading}
-                register={register}
-                errors={errors}
-                required
-            />
-            <Input
-                id="password"
-                type="password"
-                label="Password"
-                disabled={isLoading}
-                register={register}
-                errors={errors}
-                required
-            />
-        </div>
-    )
-
-    const footerContent = (
-        <div className="flex flex-col gap-4 mt-3">
-            <hr />
-            <Button
-                outline
-                label="Continue with Google"
-                icon={FcGoogle}
-                onClick={() => signIn('google')}
-            />
-            <Button
-                outline
-                label="Continue with Github"
-                icon={AiFillGithub}
-                onClick={() => signIn('github')}
-            />
-            <div
-                className='
-                    text-neutral-500
-                    text-center
-                    mt-4
-                    font-light
-                '
-            >
-                <div
-                    className='flex flex-row items-center justify-center gap-2'
-                >
-                    <div>
-                        First time using Airbnb?
-                    </div>
-                    <div
-                        onClick={toggle}
-                        className='
-                            text-neutral-800
-                            cursor-pointer
-                            hover-underline
-                        '
-                    >
-                        Create an account
-                    </div>
-                </div>
-            </div>
-        </div>
-    )
-
-    return (
-        <Modal
-            disabled={isLoading}
-            isOpen={loginModal.isOpen}
-            title='Login'
-            actionLabel='Continue'
-            onClose={loginModal.onClose}
-            onSubmit={handleSubmit(onSubmit)}
-            body={bodyContent}
-            footer={footerContent}
-        />
-    )
-}
-
-export default LoginModal;
