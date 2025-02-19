@@ -2,26 +2,57 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Set global heights */
 html,
 body,
 :root {
-    height: 100%;
+  height: 100%;
 }
 
+/* Define GALA theme variables */
+:root {
+  --gala-blue: #007dd0;
+  --gala-coral: #FF5A5F;
+  --gala-background: #FAFAFA;
+  --gala-text: #333333;
+}
 
+/* Apply global theme settings */
+body {
+  background-color: var(--gala-background);
+  color: var(--gala-text);
+}
+
+/* Overriding Leaflet classes for z-index */
 .leaflet-bottom,
 .leaflet-control,
 .leaflet-pane,
 .leaflet-top {
-    z-index: 0 !important;
+  z-index: 0 !important;
 }
 
+/* Calendar Component Adjustments */
 .rdrMonth {
-    width: 100% !important;
+  width: 100% !important;
 }
 
 .rdrCalendarWrapper {
-    width: 100% !important;
-    font-size: 16px !important;
+  width: 100% !important;
+  font-size: 16px !important;
+}
 
+/* Example custom component styles for GALA theme */
+
+/* Header styling (example for app header) */
+.header {
+  @apply bg-[var(--gala-blue)] text-white py-4 px-6;
+}
+
+/* Primary button styling */
+.button-primary {
+  @apply bg-[var(--gala-coral)] text-white font-semibold py-2 px-4 rounded transition-colors duration-200;
+}
+
+.button-primary:hover {
+  @apply bg-opacity-90;
 }
