@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { getAuth, signInWithPopup, GoogleAuthProvider, signInWithPhoneNumber, RecaptchaVerifier } from "firebase/auth";
 import { FaGoogle, FaPhone } from "react-icons/fa";
 
-const Login = () => {
+const LoginModal = () => {
   const auth = getAuth();
 
   const handleGoogleSignIn = async () => {
@@ -44,4 +44,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default LoginModal;
