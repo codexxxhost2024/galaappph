@@ -3,29 +3,29 @@ import type { Metadata } from 'next';
 import { Nunito } from 'next/font/google';
 import Favicon from "@/public/favicon.png";
 import Navbar from './components/navbar/Navbar';
+import dynamic from 'next/dynamic';
 
-import RegisterModal from './components/modals/RegisterModal';
-import LoginModal from './components/modals/LoginModal';
-import RentModal from './components/modals/RentModal';
+const RegisterModal = dynamic(() => import('./components/modals/RegisterModal'), { ssr: false });
+const LoginModal = dynamic(() => import('./components/modals/LoginModal'), { ssr: false });
+const RentModal = dynamic(() => import('./components/modals/RentModal'), { ssr: false });
+const SearchModal = dynamic(() => import('./components/modals/SearchModal'), { ssr: false });
 
 import ToasterProvider from './providers/ToasterProvider';
 import getCurrentUser from './actions/getCurrentUser';
-import SearchModal from './components/modals/SearchModal';
 
-const font = Nunito({ subsets: ['latin'] })
+const font = Nunito({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Holiday Homes & Apartment Rentals - Airbnb',
   description: 'Find the perfect place to stay at an amazing price in 191 countries. Belong anywhere with Airbnb.',
   icons: [{ rel: 'icon', url: Favicon.src }],
-}
+};
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
-
   const currentUser = await getCurrentUser();
 
   return (
@@ -42,5 +42,5 @@ export default async function RootLayout({
         </div>
       </body>
     </html>
-  )
+  );
 }
